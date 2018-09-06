@@ -7,19 +7,27 @@
 #include <Adafruit_GFX.h>    // Core graphics library by Adafruit
 #include <Arduino_ST7789.h> // Hardware-specific library for ST7789 (with or without CS pin)
 #include <SPI.h>
-
-#define TFT_DC    8
-#define TFT_RST   9 
+/*
+   Attention: If you use blue "D1 Arduino compatible" Board use "LOLIN(WEMOS) D1 R2 &mini" as board in ARDUINO IDE.
+              Pins are labeled wrong on Bord!!!!
+              Label on board   |   Use in programm  | Connect to Display
+              D2               |   D0               | RES
+              D15/SCL/D3       |   D1               | DC
+              D13/SCK/D5       |   D5               | SCL
+              D1/MOSI/D7       |   D7               | SDA
+*/
+#define TFT_DC    D1
+#define TFT_RST   D0 
 //#define TFT_CS    10 // only for displays with CS pin
-#define TFT_MOSI  11   // for hardware SPI data pin (all of available pins)
-#define TFT_SCLK  13   // for hardware SPI sclk pin (all of available pins)
+#define TFT_MOSI  D7   // for hardware SPI data pin (all of available pins)
+#define TFT_SCLK  D5   // for hardware SPI sclk pin (all of available pins)
 
 //You can use different type of hardware initialization
 //using hardware SPI (11, 13 on UNO; 51, 52 on MEGA; ICSP-4, ICSP-3 on DUE and etc)
-//Arduino_ST7789 tft = Arduino_ST7789(TFT_DC, TFT_RST); //for display without CS pin
+Arduino_ST7789 tft = Arduino_ST7789(TFT_DC, TFT_RST); //for display without CS pin
 //Arduino_ST7789 tft = Arduino_ST7789(TFT_DC, TFT_RST, TFT_CS); //for display with CS pin
 //or you can use software SPI on all available pins (slow)
-Arduino_ST7789 tft = Arduino_ST7789(TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK); //for display without CS pin
+//Arduino_ST7789 tft = Arduino_ST7789(TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK); //for display without CS pin
 //Arduino_ST7789 tft = Arduino_ST7789(TFT_DC, TFT_RST, TFT_MOSI, TFT_SCLK, TFT_CS); //for display with CS pin
 
 float p = 3.1415926;
@@ -42,25 +50,31 @@ void setup(void) {
   // large block of text
   tft.fillScreen(BLACK);
   testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", WHITE);
+  Serial.println("Block of Text");
   delay(1000);
 
   // tft print function
   tftPrintTest();
+  Serial.println("TFT Printtest");
   delay(4000);
 
   // a single pixel
   tft.drawPixel(tft.width()/2, tft.height()/2, GREEN);
+  Serial.println("Pixel");
   delay(500);
 
   // line draw test
   testlines(YELLOW);
+  Serial.println("Line yellow");
   delay(500);
 
   // optimized lines
   testfastlines(RED, BLUE);
+  Serial.println("Line red blue");
   delay(500);
 
   testdrawrects(GREEN);
+  Serial.println("Rect green");
   delay(500);
 
   testfillrects(YELLOW, MAGENTA);
@@ -95,33 +109,41 @@ void testlines(uint16_t color) {
   tft.fillScreen(BLACK);
   for (int16_t x=0; x < tft.width(); x+=6) {
     tft.drawLine(0, 0, x, tft.height()-1, color);
+    delay(1);
   }
   for (int16_t y=0; y < tft.height(); y+=6) {
     tft.drawLine(0, 0, tft.width()-1, y, color);
+    delay(1);
   }
 
   tft.fillScreen(BLACK);
   for (int16_t x=0; x < tft.width(); x+=6) {
     tft.drawLine(tft.width()-1, 0, x, tft.height()-1, color);
+    delay(1);
   }
   for (int16_t y=0; y < tft.height(); y+=6) {
     tft.drawLine(tft.width()-1, 0, 0, y, color);
+    delay(1);
   }
 
   tft.fillScreen(BLACK);
   for (int16_t x=0; x < tft.width(); x+=6) {
     tft.drawLine(0, tft.height()-1, x, 0, color);
+    delay(1);
   }
   for (int16_t y=0; y < tft.height(); y+=6) {
     tft.drawLine(0, tft.height()-1, tft.width()-1, y, color);
+    delay(1);
   }
 
   tft.fillScreen(BLACK);
   for (int16_t x=0; x < tft.width(); x+=6) {
     tft.drawLine(tft.width()-1, tft.height()-1, x, 0, color);
+    delay(1);
   }
   for (int16_t y=0; y < tft.height(); y+=6) {
     tft.drawLine(tft.width()-1, tft.height()-1, 0, y, color);
+    delay(1);
   }
 }
 
@@ -136,9 +158,11 @@ void testfastlines(uint16_t color1, uint16_t color2) {
   tft.fillScreen(BLACK);
   for (int16_t y=0; y < tft.height(); y+=5) {
     tft.drawFastHLine(0, y, tft.width(), color1);
+    delay(1);
   }
   for (int16_t x=0; x < tft.width(); x+=5) {
     tft.drawFastVLine(x, 0, tft.height(), color2);
+    delay(1);
   }
 }
 
@@ -146,6 +170,7 @@ void testdrawrects(uint16_t color) {
   tft.fillScreen(BLACK);
   for (int16_t x=0; x < tft.width(); x+=6) {
     tft.drawRect(tft.width()/2 -x/2, tft.height()/2 -x/2 , x, x, color);
+    delay(1);
   }
 }
 
@@ -154,6 +179,7 @@ void testfillrects(uint16_t color1, uint16_t color2) {
   for (int16_t x=tft.width()-1; x > 6; x-=6) {
     tft.fillRect(tft.width()/2 -x/2, tft.height()/2 -x/2 , x, x, color1);
     tft.drawRect(tft.width()/2 -x/2, tft.height()/2 -x/2 , x, x, color2);
+    delay(1);
   }
 }
 
@@ -161,6 +187,7 @@ void testfillcircles(uint8_t radius, uint16_t color) {
   for (int16_t x=radius; x < tft.width(); x+=radius*2) {
     for (int16_t y=radius; y < tft.height(); y+=radius*2) {
       tft.fillCircle(x, y, radius, color);
+      delay(1);
     }
   }
 }
@@ -169,6 +196,7 @@ void testdrawcircles(uint8_t radius, uint16_t color) {
   for (int16_t x=0; x < tft.width()+radius; x+=radius*2) {
     for (int16_t y=0; y < tft.height()+radius; y+=radius*2) {
       tft.drawCircle(x, y, radius, color);
+      delay(1);
     }
   }
 }
@@ -187,6 +215,7 @@ void testtriangles() {
     y+=4;
     z-=4;
     color+=100;
+    delay(1);
   }
 }
 
@@ -207,6 +236,7 @@ void testroundrects() {
       w-=4;
       h-=6;
       color+=1100;
+      delay(1);
     }
     color+=100;
   }
